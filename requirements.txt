@@ -9,4 +9,4 @@ statsmodels
 kaleido
 flask
 flask_cors
-traceback
+gunicorn
