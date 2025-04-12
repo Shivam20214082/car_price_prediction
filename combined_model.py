@@ -6,6 +6,10 @@ from scripts.rt_transformer import rt_transformer
 from scripts.crossformer import crossformer
 from scripts.tabtransformer import tabtransformer
 
+import matplotlib.pyplot as plt
+import os
+
+
 def print_header(msg):
     print("\n" + "=" * 60)
     print(f"{msg}")
@@ -51,6 +55,29 @@ def main():
     results_df.to_csv('outputs/model_results.csv', index=True)
     print("\n✅ Results saved to 'outputs/model_results.csv'")
     print("🏁 All models evaluated successfully!\n")
+
+    # Ensure the output folder exists
+    os.makedirs("outputs", exist_ok=True)
+
+    # Loop through each metric and save separate plots
+    for metric in ['MAE', 'RMSE', 'R2']:
+        plt.figure(figsize=(8, 5))
+        
+        # Plotting bar chart for each metric
+        plt.bar(results_df.index, results_df[metric], color='skyblue')
+        
+        # Adding title and labels
+        plt.title(f'{metric} Comparison Across Models')
+        plt.ylabel(metric)
+        plt.xlabel('Model')
+        plt.xticks(rotation=30)
+        
+        # Save plot to file
+        filepath = f"outputs/{metric.lower()}_comparison.png"
+        plt.tight_layout()
+        plt.savefig(filepath)
+        print(f"📊 {metric} plot saved to '{filepath}'")
+        plt.close()
 
 if __name__ == "__main__":
     main()

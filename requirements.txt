@@ -7,3 +7,6 @@ xgboost
 plotly
 statsmodels   
 kaleido
+flask
+flask_cors
+traceback

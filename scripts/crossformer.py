@@ -115,9 +115,13 @@ def crossformer(df):
     optimizer = torch.optim.AdamW(model.parameters(), lr=5e-4)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.7)
 
+    # Ensure models/ directory exists
+    os.makedirs('models', exist_ok=True)
+
     epochs = 50
     best_loss = float('inf')
     patience, wait = 7, 0
+    model_path = 'models/crossformer_best_model.pt'
 
     for ep in range(epochs):
         model.train()
@@ -146,14 +150,14 @@ def crossformer(df):
         if val_loss < best_loss:
             best_loss = val_loss
             wait = 0
-            torch.save(model.state_dict(), 'best_model.pt')
+            torch.save(model.state_dict(), model_path)
         else:
             wait += 1
             if wait > patience:
                 print("Early stopping.")
                 break
 
-    model.load_state_dict(torch.load('best_model.pt'))
+    model.load_state_dict(torch.load(model_path))
     model.eval()
 
     # Evaluate model
@@ -178,19 +182,18 @@ def crossformer(df):
         'Predicted': np.concatenate(y_pred).flatten()
     })
 
-
     fig = px.scatter(df_pred, x='Actual', y='Predicted',
-                     title='XgBoost - Actual vs Predicted Car Prices',
+                     title='crossformer - Actual vs Predicted Car Prices',
                      labels={'Actual': 'Actual Price', 'Predicted': 'Predicted Price'},
                      trendline='ols')
     fig.update_traces(marker=dict(size=8, color='dodgerblue'), selector=dict(mode='markers'))
 
-    # Save figure to the 'output' folder
-    output_folder = 'outputs'  
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)  
+    # Ensure outputs/ directory exists
+    output_folder = 'outputs'
+    os.makedirs(output_folder, exist_ok=True)
 
-    fig.write_image(os.path.join(output_folder, 'XgBoost_actual_vs_predicted_prices.png'))  # Save as PNG
+    # Save plot
+    fig.write_image(os.path.join(output_folder, 'crossformer_actual_vs_predicted_prices.png'))
 
     return mae, rmse, r2
 

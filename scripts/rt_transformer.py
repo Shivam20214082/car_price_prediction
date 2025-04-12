@@ -148,5 +148,9 @@ def rt_transformer(df):
     # Save the plot as a PNG image
     fig.write_image(os.path.join(output_folder, "RT_Transformer_actual_vs_predicted_prices.png"))
 
+    # ✅ Save the trained model
+    os.makedirs('models', exist_ok=True)
+    torch.save(model.state_dict(), 'models/rt_transformer_model.pth')
+
     # Return metrics for integration with the combined_model.py
     return mae, rmse, r2

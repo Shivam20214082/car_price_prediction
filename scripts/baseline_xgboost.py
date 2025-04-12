@@ -7,6 +7,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 import plotly.express as px
 import os
+import pickle
 
 def baseline_xgboost(df):
     # Define target and features
@@ -53,9 +54,9 @@ def baseline_xgboost(df):
     df_pred = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
 
     fig = px.scatter(df_pred, x='Actual', y='Predicted',
-                     title='XgBoost - Actual vs Predicted Car Prices',
-                     labels={'Actual': 'Actual Price', 'Predicted': 'Predicted Price'},
-                     trendline='ols')
+                    title='XgBoost - Actual vs Predicted Car Prices',
+                    labels={'Actual': 'Actual Price', 'Predicted': 'Predicted Price'},
+                    trendline='ols')
     fig.update_traces(marker=dict(size=8, color='dodgerblue'), selector=dict(mode='markers'))
 
     # Save figure to the 'output' folder
@@ -64,6 +65,13 @@ def baseline_xgboost(df):
         os.makedirs(output_folder)  
 
     fig.write_image(os.path.join(output_folder, 'XgBoost_actual_vs_predicted_prices.png'))  # Save as PNG
+
+
+    os.makedirs('models', exist_ok=True)
+    # ✅ Save the trained XGBoost model
+    with open('models/xgb_model.pkl', 'wb') as f:
+        pickle.dump(model, f)
+
 
     # Return evaluation metrics for the combined model
     return mae, rmse, r2

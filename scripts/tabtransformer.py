@@ -91,7 +91,9 @@ def tabtransformer(df):
     best_r2 = -float('inf')
     patience = 10
     counter = 0
-    best_model_path = '../best_model.pt'
+    os.makedirs('models', exist_ok=True)
+    best_model_path = 'models/best_model_tabtransformer.pt'
+
 
     epochs = 100
     train_losses, val_losses = [], []
